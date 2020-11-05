@@ -1,6 +1,21 @@
 import Reporter
 import numpy as np
 
+def length(individual: np.array, distance_matrix: np.array) -> float:
+    distance = 0
+    size = distance_matrix.shape[0]
+    for i in range(size - 1):
+        distance += distance_matrix[individual[i]][individual[i + 1]]
+    distance += distance_matrix[individual[-1]][individual[0]]
+    return distance
+
+def elimination(population: np.array, offspring: np.array, distance_matrix: np.array, population_size: int) -> np.array:
+    combined = list(np.concatenate((population, offspring), axis=0))
+    combined.sort(key=lambda individual: length(individual, distance_matrix))
+    new_population = combined[:population_size]
+    return np.array(new_population)
+
+
 # Modify the class name to match your student number.
 class r0123456:
 
