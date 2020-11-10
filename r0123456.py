@@ -2,6 +2,8 @@ import Reporter
 import numpy as np
 import random
 import math
+import Initialization
+import Recombination
 
 
 def length(individual: np.array, distance_matrix: np.array) -> float:
@@ -14,7 +16,8 @@ def length(individual: np.array, distance_matrix: np.array) -> float:
 
 
 def elimination(population: np.array, offspring: np.array, distance_matrix: np.array, population_size: int) -> np.array:
-    combined = list(np.concatenate((population, offspring), axis=0))
+    combined = np.concatenate((population, offspring), axis=0)
+    combined = list(combined.astype(int))
     combined.sort(key=lambda individual: length(individual, distance_matrix))
     new_population = combined[:population_size]
     return np.array(new_population)
@@ -28,8 +31,7 @@ def mutation(individual: np.array, alpha: float) -> np.array:
     :param alpha: float, chance to increase subset size by 1 each iteration
     :return:
     '''
-    print("individual", individual)
-    subset_size = 1
+    subset_size = 0
 
     individual_size = len(individual)
 
@@ -74,7 +76,8 @@ def selection(population: np.array, k: int, distance_matrix: np.array):
     :return:
     '''
     random_selection = random.choices(population, k=k)
-    return random_selection.sort(key=lambda individual: length(individual, distance_matrix))[0]
+    random_selection.sort(key=lambda individual: length(individual, distance_matrix))
+    return random_selection[0]
 
 
 # Modify the class name to match your student number.
@@ -84,29 +87,51 @@ class r0123456:
         self.reporter = Reporter.Reporter(self.__class__.__name__)
 
     # The evolutionary algorithm's main loop
-    def optimize(self, filename):
+    def optimize(self, filename, population_size, its, recom_its, k,alpha):
         # Read distance matrix from file.
         file = open(filename)
         distanceMatrix = np.loadtxt(file, delimiter=",")
         file.close()
 
         # Your code here.
+        population = Initialization.initialize(population_size,distanceMatrix.shape[0])
+        i = 0
 
-        while (yourConvergenceTestsHere):
+        while (its > i):
 
             # Your code here.
+            offspring = np.zeros([2*recom_its,distanceMatrix.shape[0]])
+            # Recombination
+            for j in range(0,2*recom_its,2):
+                parent1 = selection(population,k, distanceMatrix)
+                parent2 = selection(population,k, distanceMatrix)
+                child1,child2 = Recombination.PMX(parent1,parent2)
+                offspring[j] = child1
+                offspring[j+1] = child2
 
+            # Mutation
+            for j in range(len(offspring)):
+                offspring[j] =mutation(offspring[j],alpha)
+
+            for j in range(len(population)):
+                population[j] =mutation(population[j],alpha)
+
+            # Elimination
+            population = elimination(population,offspring,distanceMatrix,population_size)
+            print("Score iteration {}".format(i),length(population[0],distanceMatrix))
             # Call the reporter with:
             #  - the mean objective function value of the population
             #  - the best objective function value of the population
             #  - a 1D numpy array in the cycle notation containing the best solution
             #    with city numbering starting from 0
-            timeLeft = self.reporter.report(meanObjective, bestObjective, bestSolution)
-            if timeLeft < 0:
-                break
+            #timeLeft = self.reporter.report(meanObjective, bestObjective, bestSolution)
+            #if timeLeft < 0:
+            #    break
+            i+=1
 
         # Your code here.
         return 0
 
 
-print(mutation(np.arange(9), 0.3))
+TSP = r0123456()
+TSP.optimize("tour29.csv",50,500,25,10,0.5)

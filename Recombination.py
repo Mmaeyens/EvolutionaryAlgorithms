@@ -14,14 +14,14 @@ def PMX(parent1, parent2):
         p1[child1[i]] = i
         p2[child2[i]] = i
     # Choose crossover points
-    print('size ' + str(size))
+    #print('size ' + str(size))
     cxpoint1 = random.randint(0, size)
     cxpoint2 = random.randint(0, size - 1)
     if cxpoint2 >= cxpoint1:
         cxpoint2 += 1
     else:  # Swap the two cx points
         cxpoint1, cxpoint2 = cxpoint2, cxpoint1
-    print('slicing between ' + str(cxpoint1) + ' and ' + str(cxpoint2))
+    #print('slicing between ' + str(cxpoint1) + ' and ' + str(cxpoint2))
     # Apply crossover between cx points
     for i in range(cxpoint1, cxpoint2):
         # Keep track of the selected values
@@ -39,8 +39,8 @@ def PMX(parent1, parent2):
 def main():
     random.seed(datetime.now())
     print("start")
-    path1 = np.array([4, 0, 3, 1, 2])
-    path2 = np.array([1, 0, 4, 2, 3])
+    path1 = np.array([4, 0, 3, 1, 2, 5])
+    path2 = np.array([1, 5, 0, 4, 2, 3])
     child1, child2 = PMX(path1, path2)
     print(child1)
     print(child2)
