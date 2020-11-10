@@ -51,6 +51,17 @@ def mutation(individual: np.array, alpha: float) -> np.array:
     individual[first_index:first_index + subset_size] = individual[offset:offset + subset_size]
     individual[offset:offset + subset_size] = temp
 
+    '''
+    possible alternative:
+    while random.random() < alpha:
+        first_index = random.randrange(individual_size)
+        second_index = random.randrange(individual_size)
+        temp = individual[first_index]
+        individual[first_index] = individual[second_index]
+        individual[second_index] = temp
+    return individual
+    '''
+
     return individual[first_index:first_index + individual_size]
 
 
