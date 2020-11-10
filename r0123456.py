@@ -119,6 +119,10 @@ class r0123456:
             # Elimination
             population = elimination(population,offspring,distanceMatrix,population_size)
             print("Score iteration {}".format(i),length(population[0],distanceMatrix))
+            
+            bestSolution = population[0]
+            bestObjective = length(bestSolution, distanceMatrix)
+            meanObjective = np.average([length(individual, distanceMatrix) for individual in population])
             # Call the reporter with:
             #  - the mean objective function value of the population
             #  - the best objective function value of the population
