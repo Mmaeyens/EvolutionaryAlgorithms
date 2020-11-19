@@ -4,6 +4,7 @@ import random
 import math
 import Initialization
 import Recombination
+import difflib
 
 
 def length(individual: np.array, distance_matrix: np.array) -> float:
@@ -66,6 +67,13 @@ def mutation(individual: np.array, alpha: float) -> np.array:
 
     return individual[first_index:first_index + individual_size]
 
+def convergence(old_pop,new_pop,distance_matrix):
+    s1 = [round(length(x,distance_matrix),5) for x in old_pop]
+    s2 = [round(length(x,distance_matrix),5) for x in new_pop]
+    sm = difflib.SequenceMatcher(None, s1, s2)
+    return sm.ratio()
+
+
 
 def selection(population: np.array, k: int, distance_matrix: np.array):
     '''
@@ -98,6 +106,7 @@ class r0123456:
         i = 0
 
         while (its > i):
+            old_pop = population
 
             # Your code here.
             offspring = np.zeros([2*recom_its,distanceMatrix.shape[0]])
@@ -132,10 +141,12 @@ class r0123456:
             #if timeLeft < 0:
             #    break
             i+=1
+            print("mean",meanObjective)
+            print("ratio",convergence(old_pop,population,distanceMatrix))
 
         # Your code here.
         return 0
 
 
 TSP = r0123456()
-TSP.optimize("tour29.csv",50,500,25,10,0.5)
+TSP.optimize("tour29.csv",50,200,200,5,0.2)
